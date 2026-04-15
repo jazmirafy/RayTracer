@@ -6,7 +6,7 @@
 
 #include "Renderer.h"
 #include "Camera.h"
-
+#include <glm/gtc/type_ptr.hpp>
 using namespace Walnut;
 
 class ExampleLayer : public Walnut::Layer
@@ -14,7 +14,17 @@ class ExampleLayer : public Walnut::Layer
 
 public:
 	ExampleLayer()
-		:m_Camera(45.0f, 0.1f, 100.0f) {}
+		:m_Camera(45.0f, 0.1f, 100.0f) {
+			{
+				Sphere sphere;
+				m_Scene.Spheres.push_back(sphere);
+			}
+			{
+				Sphere sphere;
+				m_Scene.Spheres.push_back(sphere);
+			}
+
+	}
 	virtual void OnUpdate(float ts) override {
 		
 		m_Camera.OnUpdate(ts);
@@ -30,6 +40,16 @@ public:
 			Render();
 		}
 		ImGui::End();
+		
+
+		ImGui::Begin("Scene");
+		ImGui::DragFloat3("Position", glm::value_ptr(m_Scene.Spheres[0].Position), 0.1f);
+		ImGui::DragFloat("Radius", &m_Scene.Spheres[0].Radius, 0.1f);
+		ImGui::ColorEdit3("Albedo", glm::value_ptr(m_Scene.Spheres[0].Albedo));
+
+
+		ImGui::End();
+
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("Viewport");
@@ -50,11 +70,12 @@ public:
 
 	void Render() {
 		
-		Timer timer;
 		m_Renderer.OnResize(m_ViewportWidth, m_ViewportHeight);
 
 		m_Camera.OnResize(m_ViewportWidth, m_ViewportHeight);
-		m_Renderer.Render(m_Camera);
+		Timer timer;
+
+		m_Renderer.Render(m_Scene, m_Camera);
 
 
 
@@ -66,6 +87,7 @@ public:
 private:
 	Camera m_Camera;
 	Renderer m_Renderer;
+	Scene m_Scene;
 	uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
 	float m_LastRenderTime = 0.0f;
 };
