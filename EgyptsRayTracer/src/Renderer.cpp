@@ -36,10 +36,10 @@ void Renderer::Render(const Scene& scene, const Camera& camera) {
 	
 	//render every pixel
 	//keeping y as the outer loop so we traverse horizontally and are more cpu cache friendly
-	#pragma omp parallel for num_threads(8)
-	for (uint32_t y = 0; y < m_FinalImage->GetHeight(); y++) {
+	#pragma omp parallel for num_threads(1)
+	for (int y = 0; y < (int)m_FinalImage->GetHeight(); y++) {
 
-		for (uint32_t x = 0; x < m_FinalImage->GetWidth(); x++) {
+		for (int x = 0; x < (int)m_FinalImage->GetWidth(); x++) {
 			Ray ray;
 			ray.Origin = camera.GetPosition();
 
